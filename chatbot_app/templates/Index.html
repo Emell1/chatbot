@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'chatbot_app/chatbot_styles.css' %}">
+</head>
+<body>
+    <header>
+        <img src="{% static 'chatbot_app/logo.png' %}" alt="Logo">
+        <button class="menu" id="nueva-conversacion">Nueva Conversación</button>
+        <button class="menu" id="historial">Historial</button>
+    </header>
+    
+    <div id="container">
+        <div id="moments-sidebar">
+            <label for="tipo-lead">Tipo de Lead</label>
+            <span>New Lead</span>
+            <label id="tipo-lead" class="switch">
+                <input type="checkbox" id="tipo-lead-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span>Seguimiento</span>
+            <label for="programas">Programas:</label>
+            <select id="programa-select">
+                <option value="" disabled selected>Seleccione un programa</option>
+                <!-- Opciones dinámicas -->
+            </select>
+            <div id="momentos-container">
+                <!-- Botones dinámicos de momentos -->
+            </div>
+        </div>
+
+        <div id="chat-section">
+            <div id="submoments-container"></div>
+            <div id="chat-display"></div>
+            <div id="text-input-container">
+                <input type="text" id="user-input" placeholder="Escribe tu consulta aquí">
+                <button id="send-button">Consultar</button>
+            </div>
+        </div>
+    </div>
+    <div id="historialModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Historial</h2>
+            <div id="historialContent">
+                <!-- Aquí irá el contenido dinámico del historial -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'chatbot_app/chatbot_script.js' %}"></script>
+</body>
+</html>
