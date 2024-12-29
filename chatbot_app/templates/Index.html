@@ -1,57 +1,79 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
-    {% load static %}
+    <title>Mi empresa S.L.</title>
     <link rel="stylesheet" href="{% static 'chatbot_app/chatbot_styles.css' %}">
+    <script src="{% static 'chatbot_app/chatbot_script.js' %}" defer></script>
 </head>
 <body>
     <header>
-        <img src="{% static 'chatbot_app/logo.png' %}" alt="Logo">
-        <button class="menu" id="nueva-conversacion">Nueva Conversación</button>
-        <button class="menu" id="historial">Historial</button>
+        <h1>Mi empresa S.L.</h1>
     </header>
-    
-    <div id="container">
-        <div id="moments-sidebar">
-            <label for="tipo-lead">Tipo de Lead</label>
-            <span>New Lead</span>
-            <label id="tipo-lead" class="switch">
+
+    <main>
+        <section class="toggle-container">
+            <label for="tipo-lead-toggle" class="toggle-label">Tipo de Lead</label>
+            <label class="switch">
                 <input type="checkbox" id="tipo-lead-toggle">
-                <span class="slider round"></span>
+                <span class="slider"></span>
             </label>
-            <span>Seguimiento</span>
-            <label for="programas">Programas:</label>
+            <span id="lead-type-display">New Lead</span>
+        </section>
+
+        <section>
+            <label for="programa-select">Programas:</label>
             <select id="programa-select">
-                <option value="" disabled selected>Seleccione un programa</option>
-                <!-- Opciones dinámicas -->
+                <option value="">Seleccione un programa</option>
             </select>
-            <div id="momentos-container">
-                <!-- Botones dinámicos de momentos -->
-            </div>
-        </div>
+        </section>
 
-        <div id="chat-section">
-            <div id="submoments-container"></div>
-            <div id="chat-display"></div>
-            <div id="text-input-container">
-                <input type="text" id="user-input" placeholder="Escribe tu consulta aquí">
-                <button id="send-button">Consultar</button>
-            </div>
-        </div>
-    </div>
-    <div id="historialModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Historial</h2>
-            <div id="historialContent">
-                <!-- Aquí irá el contenido dinámico del historial -->
-            </div>
-        </div>
-    </div>
+        <section id="momentos-section" style="display:none;">
+            <label for="momento-select">Momentos:</label>
+            <div id="momento-select"></div>
+        </section>
 
-    <script src="{% static 'chatbot_app/chatbot_script.js' %}"></script>
+        <section id="submomentos-section" style="display:none;">
+            <label for="momento-select">SubMomentos:</label>
+            <div id="submoments-container"></div> 
+        </section>
+
+        <section>
+            <button id="historial">Historial</button>
+            <button id="nueva-conversacion">Nueva Conversación</button>
+        </section>
+
+        <!-- Nueva Conversación Modal -->
+<div id="nuevaConversacionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeNuevaConversacion">&times;</span>
+        <h2>Nueva Conversación</h2>
+        <p>Inicia una nueva conversación aquí.</p>
+    </div>
+</div>
+
+
+
+
+        <section>
+            <textarea id="consulta" placeholder="Escribe tu consulta"></textarea>
+            <button id="enviar-consulta">Enviar</button>
+        </section>
+
+        <!-- Modal para historial -->
+        <div id="historialModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Historial</h2>
+                <div id="historial-content"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Mi empresa S.L.</p>
+    </footer>
 </body>
 </html>

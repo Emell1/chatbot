@@ -1,138 +1,124 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Variables globales
+document.addEventListener('DOMContentLoaded', function () {
+    // Elementos del DOM
+    const tipoLeadToggle = document.getElementById('tipo-lead-toggle');
+    const programaSelect = document.getElementById('programa-select');
+    const momentoSelect = document.getElementById('momento-select');
+    const submomentoSelect = document.getElementById('submomento-select');
+    const chatDisplay = document.getElementById('chat-display');
+    const historialBtn = document.getElementById('historial-btn');
+    const nuevaConversacionBtn = document.getElementById('nueva-conversacion-btn');
 
-    let submomentos = []; // Declarar la variable submomentos aquí
+    // Validación del DOM
+    if (!tipoLeadToggle || !programaSelect || !momentoSelect || !submomentoSelect || !chatDisplay || !historialBtn || !nuevaConversacionBtn) {
+        console.error('Algunos elementos no se encontraron en el DOM. Revisa el HTML.');
+        return;
+    }
 
-    const nuevaConversacionButton = document.getElementById("nueva-conversacion");
-    const historialButton = document.getElementById("historial");
-    const tipoLeadToggle = document.getElementById("tipo-lead-toggle");
-    const momentoButtons = document.querySelectorAll(".moment-button");
-    const chatDisplay = document.getElementById("chat-display");
-    const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-button");
-    const popupNuevaConversacion = document.getElementById("popup-nueva-conversacion");
-    const closePopupNuevaConversacion = document.getElementById("close-popup-nueva-conversacion");
-    const confirmarNuevaConversacion = document.getElementById("confirmar-nueva-conversacion");
-    const cancelarNuevaConversacion = document.getElementById("cancelar-nueva-conversacion");
-    const popupPrevisualizacion = document.getElementById("popup-previsualizacion");
-    const closePopupPrevisualizacion = document.getElementById("close-popup-previsualizacion");
-    const programaSelect = document.getElementById("programa-select");
-
-    // Manejar nueva conversación
-    nuevaConversacionButton.addEventListener("click", () => {
-        popupNuevaConversacion.classList.remove("hidden");
-    });
-
-    closePopupNuevaConversacion.addEventListener("click", () => {
-        popupNuevaConversacion.classList.add("hidden");
-    });
-
-    confirmarNuevaConversacion.addEventListener("click", () => {
-        chatDisplay.innerHTML = ""; // Limpia el display de chat
-        // Limpia historial (lógica pendiente)
-        popupNuevaConversacion.classList.add("hidden");
-    });
-
-    cancelarNuevaConversacion.addEventListener("click", () => {
-        popupNuevaConversacion.classList.add("hidden");
-    });
-
-    // Manejar historial
-    historialButton.addEventListener("click", () => {
-        // Mostrar historial (lógica pendiente)
-        alert("Historial funcionalidad en desarrollo");
-    });
-
-    // Cambiar momentos
-    momentoButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            chatDisplay.innerHTML = ""; // Limpiar display
-            cargarSubmomentos(button.id); // Cargar submomentos dinámicamente
-            console.log(`Cambiando a: ${button.id}`);
-        });
-    });
-
-    // Consultar respuesta
-    sendButton.addEventListener("click", () => {
-        const query = userInput.value.trim();
-        if (query) {
-            // Realizar consulta (lógica pendiente)
-            chatDisplay.innerHTML += `<div class="user-message">${query}</div>`;
-            userInput.value = "";
-        }
-    });
-
-    // Manejar previsualización de archivos
-    closePopupPrevisualizacion.addEventListener("click", () => {
-        popupPrevisualizacion.classList.add("hidden");
-    });
-
-    // Cargar submomentos en el frontend (lógica simulada)
-   
-    function cargarSubmomentos(momentId) {
-        fetch(`/obtener_submomentos/${momentId}/`)
+    // Evento para el toggle de tipo de lead
+    tipoLeadToggle.addEventListener('change', function () {
+        const tipoLeadValue = tipoLeadToggle.checked ? 1 : 2; // Asume 1 para New Lead y 2 para Seguimiento
+        fetch(`/get-programa/?tipo_lead_id=${tipoLeadValue}`)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                if (!response.ok) throw new Error('Error al obtener programas');
                 return response.json();
             })
             .then(data => {
-                if (data.submomentos) {
-                    submomentos = data.submomentos; // Asigna los submomentos obtenidos
-                    const submomentoContainer = document.getElementById("submoments-container");
-                    submomentoContainer.innerHTML = ""; // Limpia los submomentos actuales
-                    submomentos.forEach((sub) => {
-                        const button = document.createElement("button");
-                        button.innerText = sub.nombre;
-                        button.className = "submoment-button";
-                        button.addEventListener("click", () => {
-                            console.log(`Submomento seleccionado: ${sub.id}`);
-                        });
-                        submomentoContainer.appendChild(button);
-                    });
-                } else {
-                    console.error('Error al obtener los submomentos');
-                }
+                programaSelect.innerHTML = '<option value="">Seleccione un programa</option>';
+                data.programas.forEach(programa => {
+                    const option = document.createElement('option');
+                    option.value = programa.id;
+                    option.textContent = programa.nombre;
+                    programaSelect.appendChild(option);
+                });
+                momentoSelect.innerHTML = ''; // Resetea momentos y submomentos
+                submomentoSelect.innerHTML = '';
             })
-            .catch(error => console.error('Error en la solicitud:', error));
-    }
-
-
-    function obtenerRespuestas(momentoId, submomentoId) {
-        fetch(`/obtener_respuesta/${momentoId}/${submomentoId}/`)
-         .then(response => response.json())
-         .then(data => {
-            if (data.respuesta_momento && data.respuesta_submomento) {
-                // Actualizar el display del chatbot con las respuestas
-                const chatDisplay = document.getElementById('chat-display');
-                chatDisplay.innerHTML = `
-                    <div>
-                        <strong>Respuesta del Momento:</strong>
-                        <p>${data.respuesta_momento}</p>
-                    </div>
-                    <div>
-                        <strong>Respuesta del Submomento:</strong>
-                        <p>${data.respuesta_submomento}</p>
-                    </div>
-                `;
-            } else {
-                console.error('Error al obtener las respuestas');
-            }
-        })
-        .catch(error => console.error('Error en la solicitud:', error));
-    }
-    // Cambiar tipo de lead
-    tipoLeadToggle.addEventListener("click", () => {
-        const estadoActual = tipoLeadToggle.dataset.active === "true";
-        tipoLeadToggle.dataset.active = !estadoActual;
-        tipoLeadToggle.innerText = estadoActual ? "Lead: Seguimiento" : "Lead: Nuevo";
+            .catch(error => console.error('Error cargando programas:', error));
     });
 
-    // Manejar selección de programa
-    if (programaSelect) {
-        programaSelect.addEventListener("change", () => {
-            console.log(`Programa seleccionado: ${programaSelect.value}`);
-            // Aquí puedes agregar la lógica para filtrar en la base de datos
-        });
-    }})
+    // Evento para la selección de programa
+    programaSelect.addEventListener('change', function () {
+        const programaId = programaSelect.value;
+        if (!programaId) return; // Asegura que un programa está seleccionado
+        fetch(`/get-momento/?programa_id=${programaId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener momentos');
+                return response.json();
+            })
+            .then(data => {
+                momentoSelect.innerHTML = '<option value="">Seleccione un momento</option>';
+                data.momentos.forEach(momento => {
+                    const option = document.createElement('option');
+                    option.value = momento.id;
+                    option.textContent = momento.nombre;
+                    momentoSelect.appendChild(option);
+                });
+                submomentoSelect.innerHTML = ''; // Resetea submomentos
+            })
+            .catch(error => console.error('Error cargando momentos:', error));
+    });
+
+    // Evento para la selección de momento
+    momentoSelect.addEventListener('change', function () {
+        const momentoId = momentoSelect.value;
+        if (!momentoId) return; // Asegura que un momento está seleccionado
+        fetch(`/get-submomento/?momento_id=${momentoId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener submomentos');
+                return response.json();
+            })
+            .then(data => {
+                submomentoSelect.innerHTML = '<option value="">Seleccione un submomento</option>';
+                data.submomentos.forEach(submomento => {
+                    const option = document.createElement('option');
+                    option.value = submomento.id;
+                    option.textContent = submomento.nombre;
+                    submomentoSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error cargando submomentos:', error));
+    });
+
+    // Botón historial
+    historialBtn.addEventListener('click', function () {
+        fetch('/get-historial/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Muestra el historial en el chatDisplay o en un modal
+                    console.log('Historial cargado:', data.historial);
+                    const historialModal = document.createElement('div');
+                    historialModal.className = 'modal';
+                    historialModal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-button">&times;</span>
+                            <h3>Historial</h3>
+                            <ul>
+                                ${data.historial.map(item => `<li>${item.contenido}</li>`).join('')}
+                            </ul>
+                        </div>`;
+                    document.body.appendChild(historialModal);
+                    const closeButton = historialModal.querySelector('.close-button');
+                    closeButton.addEventListener('click', () => historialModal.remove());
+                } else {
+                    console.error('Error al cargar historial:', data.message);
+                }
+            })
+            .catch(error => console.error('Error cargando historial:', error));
+    });
+
+    // Botón nueva conversación
+    nuevaConversacionBtn.addEventListener('click', function () {
+        fetch('/nueva-conversacion/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chatDisplay.innerHTML = ''; // Limpia el chat
+                    alert('Nueva conversación iniciada.');
+                } else {
+                    alert('Error al iniciar nueva conversación.');
+                }
+            })
+            .catch(error => console.error('Error iniciando nueva conversación:', error));
+    });
+});
